@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class Example extends Controller
 {
-    public function index(){
+    public function all(){
 
         try{
             $employees = Employee::all();
