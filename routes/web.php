@@ -1,8 +1,8 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use app\Http\Controllers\API\CompanyController;
-use App\Http\Controllers\Example;
+use App\Http\Controllers\API\CompanyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,5 +29,6 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('/company',[CompanyController::class,'all']);
-Route::get('/example',[Example::class,'all']);
+
+    
+Route::get('/company', [CompanyController::class, 'all']);
