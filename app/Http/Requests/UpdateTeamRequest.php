@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCompanyRequest extends FormRequest
+class UpdateTeamRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,9 @@ class UpdateCompanyRequest extends FormRequest
         return [
             // name bisa nullable karena bisa aja di ngk mau ganti nama
             'name'  =>   'nullable|string|max:255',
-            'logo'  =>   'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            
+            'icon'  =>   'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // Attach yang ada dicreate dipindahkan
+            'company_id' => 'required|integer|exists:companies,id'
         ];
     }
 }

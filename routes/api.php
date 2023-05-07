@@ -3,6 +3,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\TeamController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CompanyController;
 
@@ -27,20 +28,15 @@ Route::prefix('company')->middleware('auth:sanctum')->name('company.')->group(fu
     Route::post('',[CompanyController::class, 'create'])->name('create');
     Route::get('', [CompanyController::class, 'fetch'])->name('fetch');
     // Route::put('{id}',[CompanyController::class, 'update'])->name('update');    // Karena ngk bsia update gambar dan teks bersamaan
-    Route::post('update/{id}',[CompanyController::class, 'update'])->name('update');  
-
+    Route::post('update/{id}',[CompanyController::class, 'update'])->name('update');
 });
 
-
-// ----------------------- O R -----------------------------------
-// Route::group([
-//     'prefix' =>'company',
-//     'middleware' =>'auth:sanctum',
-// ], function (){
-//     Route::post('',[CompanyController::class, 'create'])->name('create');
-//     Route::get('', [CompanyController::class, 'all'])->name('fetch');
-//     Route::put('',[CompanyController::class, 'update'])->name('update');
-// });
+Route::prefix('team')->middleware('auth:sanctum')->name('team.')->group(function(){
+    Route::post('',[TeamController::class, 'create'])->name('create');
+    Route::get('', [TeamController::class, 'fetch'])->name('fetch');
+    Route::post('update/{id}',[TeamController::class, 'update'])->name('update');  
+    Route::delete('{id}', [TeamController::class, 'destroy'])->name('delete');
+});
 
 // API Auth
 Route::name('auth.')->group(function(){
@@ -54,3 +50,13 @@ Route::name('auth.')->group(function(){
     
 });
 
+// Note:
+// ----------------------- O R -----------------------------------
+// Route::group([
+//     'prefix' =>'company',
+//     'middleware' =>'auth:sanctum',
+// ], function (){
+//     Route::post('',[CompanyController::class, 'create'])->name('create');
+//     Route::get('', [CompanyController::class, 'all'])->name('fetch');
+//     Route::put('',[CompanyController::class, 'update'])->name('update');
+// });

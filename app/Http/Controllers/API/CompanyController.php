@@ -19,15 +19,15 @@ class CompanyController extends Controller
         $name = $request->input('name');
         $limit = $request->input('limit',10);
 
-        // jika ada if maka ?condition if  = blabla
+        $companyQuery = Company::with(['users'])->whereHas('users', function($query){$query->where('user_id', Auth::id());});
 
+        // Get single data
         // powerhuman.com/api/company?id=1
         if($id)
         {
             // $company = Company::find($id);                  Tanpa ada relasi
-            $company = Company::with(['users'])->find($id);  // Pakai relasi tapi hanya id doang yang di cek
-            $company = Company::whereHas('users', function($query){
-            $query->where('user_id', Auth::id());})->with(['users'])->find($id);  
+            // $company = Company::with(['users'])->find($id);  // Pakai relasi tapi hanya id doang yang di cek
+            $company = $companyQuery->find($id);  
             
             
 
@@ -38,19 +38,17 @@ class CompanyController extends Controller
 
             return ResponseFormatter::error('Company Not Found', 484);
         }
+
+        ///////////////////////////////////////
+        // Get multiple data
         //Ambil data company si user
         // powerhuman.com/api/company
         
         // Blum Auth
         // $companies = Company::with(['users']);
-
+        
         // Pakai Auth
-        $companies = Company::whereHas('users', function($query){
-            $query->where('user_id', Auth::id());
-        });
-            
-
-
+        $companies = $companyQuery;
         // powerhuman.com/api/company?name=Dani
         if($name){
             $companies->where('name','like','%' . $name . '%');
