@@ -21,10 +21,36 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('user',[UserController::class, 'fetch'] )->middleware('auth:sanctum');
+// API Company
 
-Route::post('login',[UserController::class, 'login']);
-Route::post('logout',[UserController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('register',[UserController::class, 'register']);
+Route::prefix('company')->middleware('auth:sanctum')->name('company.')->group(function(){
+    Route::post('',[CompanyController::class, 'create'])->name('create');
+    Route::get('', [CompanyController::class, 'fetch'])->name('fetch');
+    // Route::put('{id}',[CompanyController::class, 'update'])->name('update');    // Karena ngk bsia update gambar dan teks bersamaan
+    Route::post('update/{id}',[CompanyController::class, 'update'])->name('update');  
 
-Route::get('/company', [CompanyController::class, 'all']);
+});
+
+
+// ----------------------- O R -----------------------------------
+// Route::group([
+//     'prefix' =>'company',
+//     'middleware' =>'auth:sanctum',
+// ], function (){
+//     Route::post('',[CompanyController::class, 'create'])->name('create');
+//     Route::get('', [CompanyController::class, 'all'])->name('fetch');
+//     Route::put('',[CompanyController::class, 'update'])->name('update');
+// });
+
+// API Auth
+Route::name('auth.')->group(function(){
+    Route::post('register',[UserController::class, 'register'])->name('register');
+    Route::post('login',[UserController::class, 'login'])->name('login');
+
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::get('user',[UserController::class, 'fetch'] )->middleware('auth:sanctum')->name('fetch');
+        Route::post('logout',[UserController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
+    });
+    
+});
+

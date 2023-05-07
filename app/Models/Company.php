@@ -20,8 +20,9 @@ class Company extends Model
         'user_id'
     ];
 
+    // Many to many
     public function users(){
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class);
     }
 
     public function teams(){
