@@ -3,50 +3,50 @@
 namespace App\Http\Controllers\API;
 
 use Exception;
-use App\Models\Team;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateTeamRequest;
-use App\Http\Requests\UpdateTeamRequest;
+use App\Http\Requests\CreateRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 
 class RoleController extends Controller
 {
-    public function create(CreateTeamRequest $request){
+    public function create(CreateRoleRequest $request){
         try{
-            // Create Team
-            $team = Team::create([
+            // Create Role
+            $role = Role::create([
                 'name' => $request->name,
                 'company_id' => $request->company_id,
             ]);
 
-            if(!$team){
-                throw new Exception('Team not created');
+            if(!$role){
+                throw new Exception('Role not created');
             } 
 
-            return ResponseFormatter::success($team,'Team created');
+            return ResponseFormatter::success($role,'Role created');
         }catch(Exception $e){
             return ResponseFormatter::error($e->getMessage(),'500');
         }
     }
 
-    public function update(UpdateTeamRequest $request, $id){
+    public function update(UpdateRoleRequest $request, $id){
             try {
-            // Get team
-            $team = Team::find($id);
+            // Get role
+            $role = Role::find($id);
 
-            // Check if team exists
-            if(!$team) {
-                throw new Exception('Team not found');
+            // Check if role exists
+            if(!$role) {
+                throw new Exception('Role not found');
             }
 
-            // Update team
-            $team->update([
+            // Update role
+            $role->update([
                 'name' => $request->name,
                 'company_id' => $request->company_id,
             ]);
 
-            return ResponseFormatter::success($team, 'Team updated');
+            return ResponseFormatter::success($role, 'Role updated');
         } catch (Exception $e) {
             return ResponseFormatter::error($e->getMessage(), 500);
         }
@@ -57,52 +57,61 @@ class RoleController extends Controller
         $id = $request->input('id');
         $name = $request->input('name');
         $limit = $request->input('limit',10);
+        $with_responsibilities = $request->input('with_responsibilities',false);
 
-        $teamQuery = Team::query();
+        $roleQuery = Role::query();
 
         // Get single data
-        // powerhuman.com/api/team?id=1                  // jika pakai if maka url akan ?id=blabla
+        // powerhuman.com/api/role?id=1                  // jika pakai if maka url akan ?id=blabla
         if($id)
         {
-            $team = $teamQuery->find($id);  
-            if($team)
+            // bakalan masuk ke file json
+            // jika data single maka akan display responsibilitynya
+            $role = $roleQuery->with('responsibilities')->find($id);  
+            if($role)
             {
-                return ResponseFormatter::success($team,'Team Found');
+                return ResponseFormatter::success($role,'Role Found');
             }
 
-            return ResponseFormatter::error('Team Not Found', 484);
+            return ResponseFormatter::error('Role Not Found', 484);
         }
 
         // Get multiple data
 
-        // Fileter Team dengan company id
-        $teams = $teamQuery->where('company_id',$request->company_id);
+        // Fileter Role dengan company id
+        $roles = $roleQuery->where('company_id',$request->company_id);
 
-        // powerhuman.com/api/team?name=Dani
+        // powerhuman.com/api/role?name=Dani
         // Options/bisa ngk bisa iya
         if($name){
-            $teams->where('name','like','%' . $name . '%');
+            $roles->where('name','like','%' . $name . '%');
         }
+
+        // kalau dipunya responsible maka tampilkan
+        if ($with_responsibilities) {
+            $roles->with('responsibilities');
+        }
+
         return ResponseFormatter::success(
-            $teams->paginate($limit),
-            'Teams Found'
+            $roles->paginate($limit),
+            'Roles Found'
         );
     }
 
     public function destroy($id){
         try {
-            // Get team
-            $team = Team::find($id);
+            // Get role
+            $role = Role::find($id);
 
-            // Check if team exists
-            if (!$team) {
-                throw new Exception('Team not found');
+            // Check if role exists
+            if (!$role) {
+                throw new Exception('Role not found');
             }
 
-            // Delete team
-            $team->delete();
+            // Delete role
+            $role->delete();
 
-            return ResponseFormatter::success('Team deleted');
+            return ResponseFormatter::success('Role deleted');
         } catch (Exception $e) {
             return ResponseFormatter::error($e->getMessage(), 500);
         }
